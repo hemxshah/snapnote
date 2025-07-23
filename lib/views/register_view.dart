@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-//import 'dart:developer' as devtools show log;
 
 import 'package:myapp/contants/routes.dart';
+import 'package:myapp/services/auth/auth_exceptions.dart';
+import 'package:myapp/services/auth/auth_service.dart';
 import 'package:myapp/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
@@ -59,26 +59,22 @@ class _RegisterViewState extends State<RegisterView> {
               final password = _password.text;
 
               try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await AuthService.firebase().createUser(
                   email: email,
                   password: password,
                 );
 
-                final user = FirebaseAuth.instance.currentUser;
-                await user?.sendEmailVerification();
+                AuthService.firebase().currentUser;
+                AuthService.firebase().sendEmailVerification();
                 Navigator.of(context).pushNamed(verifyEmailRoute);
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'weak-password') {
+              } on WeakPasswordAuthException  {
                   showErrorDialog(context, "Weak password");
-                } else if (e.code == 'email-already-in-use') {
+                } on EmailAlreadyInUseAuthException {
                   showErrorDialog(context, "Email already in use");
-                } else if (e.code == 'invalid-email') {
+                } on InvalidEmailAuthException {
                   showErrorDialog(context, "Invalid email");
-                } else {
-                  showErrorDialog(context, "Error : {$e.code}");
-                }
-              } catch (e) {
-                showErrorDialog(context, e.toString());
+                } on GenericAuthException {
+                showErrorDialog(context, "Failed to register");
               }
             },
             child: const Text('Register'),
