@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:myapp/contants/routes.dart';
 import 'package:myapp/services/auth/auth_exceptions.dart';
 import 'package:myapp/services/auth/auth_service.dart';
-import 'package:myapp/utilities/show_error_dialog.dart';
+import 'package:myapp/utilities/dialogs/error_dialog.dart';
+
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
